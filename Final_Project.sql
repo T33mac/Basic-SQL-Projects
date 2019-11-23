@@ -1,5 +1,5 @@
-use db_biblioteca
-
+USE db_biblioteca
+GO
 CREATE TABLE LIBRARY_BRANCH (
 	BranchID INT PRIMARY KEY NOT NULL IDENTITY (1,1),
 	BranchName VARCHAR(50) NOT NULL,
@@ -175,6 +175,11 @@ Where CardNo = 2002;
 
 --practice selects
 
+
+USE db_biblioteca
+GO
+CREATE PROCEDURE dbo.uspFindLostTribe_#1
+AS
 SELECT
 	a1.Number_Of_Copies ,a2.Title ,a3.BranchName
 	FROM BOOK_COPIES a1 
@@ -182,23 +187,41 @@ SELECT
 	INNER JOIN LIBRARY_BRANCH a3 ON a3.BranchID = a1.BranchID  --#1
 	WHERE Title = 'The Lost Tribe'
 	AND BranchName = 'Sharpstown'
-;
+GO
 
+
+
+USE db_biblioteca
+GO
+CREATE PROCEDURE dbo.uspFindLostTribe_#2
+AS
 SELECT
 	a1.Number_Of_Copies ,a2.Title ,a3.BranchName
 	FROM BOOK_COPIES a1 
 	INNER JOIN BOOKS a2 ON a2.BookID = a1.BookID
 	INNER JOIN LIBRARY_BRANCH a3 ON a3.BranchID = a1.BranchID  --#2
 	WHERE Title = 'The Lost Tribe'
-;
+GO
 
+
+
+
+USE db_biblioteca
+GO
+CREATE PROCEDURE dbo.uspNoCheckOut_#3
+AS
 SELECT
 	a1.fname, a1.lname, a1.CardNo
 	FROM BORROWER a1
 	FULL OUTER JOIN BOOK_LOANS a2 ON a2.CardNo = a1.CardNo     --#3
 	WHERE DateOut IS NULL
-;
+GO
 
+
+USE db_biblioteca
+GO
+CREATE PROCEDURE dbo.uspSharpsDueToday_#4
+AS
 SELECT
 	a2.Title, a3.fname, a3.lname, a3.Address
 	FROM BOOK_LOANS a1
@@ -207,8 +230,13 @@ SELECT
 	INNER JOIN LIBRARY_BRANCH a4 ON a4.BranchID = a1.BranchID  --#4
 	WHERE DateIn = '2019-11-22'
 	AND BranchName = 'Sharpstown'
-;
+GO
 
+
+USE db_biblioteca
+GO
+CREATE PROCEDURE dbo.uspBooksLoanedAll_#5
+AS
 SELECT COUNT(*) AS "Sharpstown Branch Loans"
 	FROM BOOK_LOANS a1
 	INNER JOIN LIBRARY_BRANCH a2 ON a2.BranchID = a1.BranchID  --#5
@@ -231,16 +259,26 @@ SELECT COUNT(*) AS "Metro Branch Loans"
 	FROM BOOK_LOANS a1
 	INNER JOIN LIBRARY_BRANCH a2 ON a2.BranchID = a1.BranchID  --#5
 	WHERE BranchName = 'Metro'
-;
+GO
 
 
+
+USE db_biblioteca
+GO
+CREATE PROCEDURE dbo.uspMoreThan5_#6
+AS
 SELECT a1.fname, a1.lname, a1.Address, COUNT(ALL a2.CardNo) AS TotalBooks
 	FROM BORROWER a1
 	FULL OUTER JOIN BOOK_LOANS a2 ON a2.CardNo = a1.CardNo      --#6
 	GROUP BY a1.fname, a1.lname, a1.Address
 	HAVING COUNT(ALL a2.CardNo) > 5
-;
+GO
 
+
+USE db_biblioteca
+GO
+CREATE PROCEDURE dbo.uspKingInCentral_#7
+AS
 SELECT a3.Title, a1.Number_Of_Copies
 	FROM BOOK_COPIES a1
 	INNER JOIN LIBRARY_BRANCH a2 ON a2.BranchID = a1.BranchID
@@ -248,4 +286,4 @@ SELECT a3.Title, a1.Number_Of_Copies
 	INNER JOIN BOOK_AUTHORS a4 ON a4.BookID = a3.BookID          --#7
 	WHERE AuthorName = 'Stephen King'
 	AND BranchName = 'Central'
-;
+GO
